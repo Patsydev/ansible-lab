@@ -1,0 +1,36 @@
+- name: Practica Ansible
+  hosts: docker
+  tasks:
+    - name: Mostrar el nombre del host
+      debug:
+        msg: "Nombre del host {{ inventory_hostname }}"
+
+    - name: Mostrar el sistema operativo
+      debug:
+        msg: "Sistema operativo {{ ansible_distribution }} {{ ansible_distribution_version }}"
+
+    - name: Crear el directorio principal
+      file:
+        path: /tmp/ansible-demo
+        state: directory
+
+    - name: Crear info.txt con el servidor y el sistema operativo
+      copy:
+        dest: /tmp/ansible-demo/info.txt
+        content: |
+          Servidor {{ inventory_hostname }}
+          Sistema operativo {{ ansible_distribution }} {{ ansible_distribution_version }}
+
+    - name: Crear carpetas con un loop
+      file:
+        path: "/tmp/ansible-demo/{{ item }}"
+        state: directory
+      loop:
+        - logs
+        - backup
+        - config
+
+    - name: Mensaje solo para Ubuntu
+      debug:
+        msg: "Este servidor usa Ubuntu"
+      when: ansible_distribution == "Ubuntu"
